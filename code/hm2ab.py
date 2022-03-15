@@ -4,7 +4,7 @@ from comet_ml import Experiment
 # Create an experiment with your api key:
 experiment = Experiment(
     api_key="pTKIV6STi3dM8kJmovb0xt0Ed",
-    project_name="a-b-prediction",
+    project_name="cornn-temp",
     workspace="suchzheng2",
 )
 
