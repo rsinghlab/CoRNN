@@ -957,7 +957,7 @@ def main():
     )
     parser.add_argument(
         "--model",
-        default="cnn_1",
+        default="gru",
         type=str,
         required=True,
         help="The directory contains all input files, all files should end with .cvs for this task",
@@ -1042,7 +1042,7 @@ def main():
     )
 
     parser.add_argument(
-    	"--resolution", default="50kb", type=str, help="experiment resolution of eigenvectors"
+    	"--resolution", default="100kb", type=str, help="experiment resolution of eigenvectors"
     )
 
     parser.add_argument(
@@ -1057,6 +1057,14 @@ def main():
     	"--layer", default=1, type=int, help="number of layer in rnn"
     )
 
+    parser.add_argument(
+    	"--add_mean_evec", default=False, type=bool, help="add mean evec to training data or not"
+    )
+
+
+
+
+    # aruguments for corss-validation
 
     parser.add_argument(
     	"--cross_validation", default=False, type=bool, help="use cross validation or not"
@@ -1074,13 +1082,15 @@ def main():
     	"--fold_data_path", default="", type=str, help="the data path for saving running data and models"
     )
 
-    parser.add_argument(
-    	"--add_mean_evec", default=False, type=bool, help="use cross validation or not"
-    )
+    # special arguments
+
+    
 
     parser.add_argument(
-    	"--special_tag", default=None, type=str, help="number of fold in cross validation"
+    	"--special_tag", default=None, type=str, help="self define special tag"
     )
+
+    # others
 
     parser.add_argument(
     	"--test_by_region", default=None, type=bool, help="for generate test by region test purpose"

@@ -133,3 +133,4 @@ dmypy.json
 #data folder
 
 data/*
+data.zip

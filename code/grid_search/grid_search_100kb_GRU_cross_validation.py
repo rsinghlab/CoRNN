@@ -16,7 +16,7 @@ for cell in cells:
 	for param_selection in list(itertools.product(*param_vals)):
 		params = {}
 		
-		command = 'python cnn/hm2ab.py --data_dir \
+		command = 'python code/hm2ab.py --data_dir \
 		"data/6_cell_input_updated/6_cell_input_updated_100kb/" --task "cla" \
 		--model "gru" --split "5_cells" -Ts\
 		 --epoch 10 --resolution "100kb" --cross_validation True --num_fold 5 \
