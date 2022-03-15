@@ -114,6 +114,23 @@ def combine_data_rf(all_data):
             combined_y.append(data["cla_label"])
     return combined_x, combined_y
 
+def combine_data_rf_601(all_data):
+    combined_x = []
+    combined_y = []
+    print("600 features")
+    for key, item in all_data.items():
+        for data in item:
+            # print("here")
+            # print(data["data"].shape)
+            mean_data = np.mean(np.array(data["data"]), axis=0)
+            flettened_x = np.array(data["data"]).flatten()
+            # print(flettened_x.shape)
+            # print(data["cla_label"])
+            appended_x = np.append(flatten_x,data["mean_evec"])
+            combined_x.append(appended_x)
+            combined_y.append(data["cla_label"])
+    return combined_x, combined_y
+
 
 def combine_data_avg(all_data):
     # 6 features (6 mean)

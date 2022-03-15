@@ -40,6 +40,8 @@ from sklearn.linear_model import SGDRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 
+import pandas as pd
+
 import logging
 
 save_path = os.path.join("data","exp_data","cla","rf")
@@ -94,9 +96,14 @@ def SGD_cross_validation(all_data, select_param, cells, args):
 			else:
 				train_data[key] = item
 		if args.use_600 == True:
-			train_x, train_y = combine_data_rf(train_data)
-			valid_x, valid_y = combine_data_rf(valid_data)
-			test_x, test_y = combine_data_rf(test_data)
+			if args.add_mean == True:
+				train_x, train_y = combine_data_rf_601(train_data)
+				valid_x, valid_y = combine_data_rf_601(valid_data)
+				test_x, test_y = combine_data_rf_601(test_data)
+			else:
+				train_x, train_y = combine_data_rf(train_data)
+				valid_x, valid_y = combine_data_rf(valid_data)
+				test_x, test_y = combine_data_rf(test_data)
 		elif args.add_std == True:
 			if args.add_mean == True:
 				train_x, train_y = combine_data_with_mean_avg_std(train_data)
@@ -245,7 +252,6 @@ def new_lr_model(select_dict, args):
 		penalty = select_dict['penalty'],\
 		solver = select_dict['solver'],\
 		C = select_dict['C'],\
-		class_weight = select_dict['class_weight'],\
 		max_iter = select_dict['max_iter'],\
 		random_state=0,\
 		verbose=1)
@@ -286,10 +292,9 @@ def main():
 
 	hyperparameter = {
 		'penalty': ['l1','l2'],
-		'C':[0.0001, 1, 100, 1000],
+		'C':[0.001, 1, 100, 1000],
 		'solver' : ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],
-		'class_weight':['balanced', None],
-		'max_iter':[1, 10, 100, 500],
+		'max_iter':[1, 10, 50],
 	}
 
 
@@ -315,17 +320,26 @@ def main():
 		total_search = len(list(itertools.product(*hyperparameter.values())))
 
 		if args.search:
+			search_results_collect = []
 			for idx, param_selection in enumerate(list(itertools.product(*hyperparameter.values()))):
 				a_logger.debug("Search Progress: {}/{}".format(idx,total_search))
 
 				select_dict = dict(zip(hyperparameter.keys(),param_selection))
+				search_results_collect_line = [select_dict["penalty"], \
+				select_dict['solver'],select_dict['C'], select_dict['max_iter']]
+
 				if select_dict["penalty"] == "l1" and \
 					select_dict['solver'] != "saga" and \
 					select_dict['solver'] != "liblinear":
 					a_logger.debug("skip setting: {}".format(select_dict))
+					search_results_collect_line.append("SKIP")
+					search_results_collect.append(search_results_collect_line)
 					continue
 
 				clf, valid_auc, model_test_auc= logistic_regression_cross_validation(all_data,select_dict,cells,args)
+				search_results_collect_line.append(valid_auc)
+				search_results_collect.append(search_results_collect_line)
+					
 				if valid_auc > best_auc:
 					best_auc = valid_auc
 					best_param = select_dict
@@ -345,6 +359,10 @@ def main():
 			grid_search_results[target]["test_auc"] = best_model_test_auc
 
 			print("~~~~~Logistic Regression Grid search of {}: {}~~~~~~".format(target,grid_search_results[target]["test_auc"]))
+			#save search research collection
+
+			df = pd.DataFrame(search_results_collect,columns = ["penalty","solver","C","max_iter","valid_auc"])
+			df.to_csv(os.path.join(run_dpath,'{}_search_restuls.csv'.format(target)))
 
 		else:
 			clf, valid_auc, model_test_auc= logistic_regression_cross_validation(all_data,cells,args)
