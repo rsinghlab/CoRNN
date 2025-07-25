@@ -31,7 +31,7 @@ experiment = Experiment(
 ## 2. link to data
 
 1. Dowload training data from this link: 
-* [https://drive.google.com/file/d/1uhM991GNBzJSZoXZhX-uW0FhemFJPhwi/view?usp=sharing](https://zenodo.org/records/16414882)
+* https://zenodo.org/records/16414882 
 
 2. Unzip it under CoRNN folder, you will have CoRNN/data/
 
